@@ -2,17 +2,14 @@ import pandas as pd
 import os
 
 try:
-    os.system('cls') # Clear the console
+    os.system('cls') # Clear the console cls for windows and clear
     file = './data/transactional-sample.csv'
     df = pd.read_csv(file)
-    print('File ' + file + ' loaded successfully')
 except FileNotFoundError:
     os.system('cls')
-    print('Error: The file ' + file + ' was not found in the specified folder.')
-    print('Verify the pathing or the existence of the file.')
-    exit()
+    print('Error')
 
-# Firs Rule - Sistematic use of distinct credit cards by the same user.
+# First Rule - Sistematic use of distinct credit cards by the same user.
 print('\n--Analysis of the First Anti-Fraud Rule\n')
 print('Rule: Sistematic use of distinct credit cards by the same user.')
 
@@ -55,3 +52,23 @@ if not suspect_users_overall_multiple_cards.empty:
     print("\nResults were saved in 'suspicious_users_multiple_cards.csv'.")
 else:
     print('Nobody were found for this rule in this zone at this moment.')
+
+# Rule to block fraudulent devices
+# Rule: Identify and block devices associated with chargebacks (has_cbk = True).
+print('\n--- Analysis of the Second Anti-Fraud Rule')
+
+# Filter the DataFrame to include only transactions with chargebacks
+devices_with_cbk = df[df['has_cbk'] == True]
+
+# Get the unique device IDs from these transactions
+blocked_devices = devices_with_cbk['device_id'].unique()
+
+if blocked_devices.size > 0:
+    print(f'Total unique devices identified with chargebacks: {len(blocked_devices)}')
+    # Convert the array of device IDs to a DataFrame for saving to CSV
+    blocked_devices_df = pd.DataFrame(blocked_devices, columns=['device_id'])
+    os.makedirs('./results', exist_ok=True) 
+    blocked_devices_df.to_csv('./results/blocked_devices.csv', index=False)
+    print("Identified devices with chargebacks were saved in 'blocked_devices.csv'.")
+else:
+    print('No devices with chargebacks were found.')
