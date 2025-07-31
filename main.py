@@ -19,7 +19,7 @@ df['transaction_date'] = pd.to_datetime(df['transaction_date'])
 df['transaction_day'] = df['transaction_date'].dt.date
 
 ## DANGER ZONE 
-cards_per_user_per_day = df.groupby(['user_id', 'transaction_day'])['card_number'].nunique()
+cards_per_user_per_day = df.groupby(['user_id', 'transaction_day', 'transaction_id'])['card_number'].nunique()
 threshold_same_day_danger = 3 # Maximum of distinct card per day
 
 print (f'\nMaximum of suspicious used cards per user per day defined to: {threshold_same_day_danger} or more.') 
@@ -53,7 +53,7 @@ if not suspect_users_overall_multiple_cards.empty:
 else:
     print('Nobody were found for this rule in this zone at this moment.')
 
-# Rule to block fraudulent devices
+# Second Rule - Devices used in a others fraudulent transactions.
 # Rule: Identify and block devices associated with chargebacks (has_cbk = True).
 print('\n--- Analysis of the Second Anti-Fraud Rule')
 
@@ -72,3 +72,26 @@ if blocked_devices.size > 0:
     print("Identified devices with chargebacks were saved in 'blocked_devices.csv'.")
 else:
     print('No devices with chargebacks were found.')
+
+# Third Rule - Merchants transacting only with fraudulent users.
+# Group by merchant and count unique users
+users_per_merchant = df.groupby('merchant_id')['user_id'].nunique()
+
+# Filter merchants who have only transacted with one user
+merchants_with_one_user = users_per_merchant[users_per_merchant == 1].index
+
+# Filter transactions involving these merchants
+df_one_user_merchants = df[df['merchant_id'].isin(merchants_with_one_user)]
+
+# Group by merchant and check if the single user has fraudlent transactions
+merchants_with_single_fraudulent_user = df_one_user_merchants.groupby('merchant_id')['has_cbk'].any()
+
+# Filter for merchants where the single user has fraudlent transactions
+merchants_with_single_fraudulent_user = merchants_with_single_fraudulent_user[merchants_with_single_fraudulent_user == True].index
+
+if merchants_with_single_fraudulent_user.size > 0:
+    merchants_with_single_fraudulent_user_df = pd.DataFrame(merchants_with_single_fraudulent_user, columns=['merchant_id'])
+    os.makedirs('./results', exist_ok=True)
+    merchants_with_single_fraudulent_user_df.to_csv('./results/merchants_with_single_fraudulent_user_cbk.csv', index=False)
+else:
+    print('No merchants with a single fraudulent user (has_cbk == True) were found.')
