@@ -21,7 +21,7 @@ Answer:
       - Directly intermediate between the merchant and the flag. It Is responsable for the liquidation (recieving and repass the money) and all the comunication to the network. Like: Cielo and Getnet.
 - Sub-acquirer:
   - Function:
-      - A intermediate that acredits small and medium merchants between an acquirer. Acts like an "agragator".
+      - An intermediator that acredits small and medium merchants between an acquirer. Acts like an "agragator".
   - Flow:
       - The sub-acquirer recieve the money flow of the merchants and repass It to the acquirer like if the transactions belongs to the sub-acquierer, It's responsable by the risk managment, anti-fraud and repass the payment to the merchants, simplifying their operation. Example: PagSeguro and Mercado Pago.
 
