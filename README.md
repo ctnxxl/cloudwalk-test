@@ -89,3 +89,73 @@ Please, let us know when you finish It, then we can start imediatly the process 
 Best regards,
 
 Nicolas"
+
+3. Get your hands dirty
+   
+1. Analyze the data provided and present your conclusions. What suspicious behaviors did
+you find? What led you to this conclusion? What actions would you take?
+
+Answer:
+I started the analyze focusing on users with higher number of fraudulent transactions, looking for common behavioral patterns that could indicate suspicious activity.
+
+1 - Pattern of multiple credit cards per user.
+ 	Users involved in fraud almost always used a different credit cards for each transaction, unlike legitimate users, who typically use only one or two cards consistently. This pattern is common in fraud scenarios where attackers test large sets of stolen or generated card numbers.
+
+2 - Especific case: User 11750
+This user had the highest number of fraudulent transactions.
+Several of these transactions were approved, even though they showed clear risk indicators.
+Examples include transaction transaction IDs: 21321250, 21320960, 21320888, 21320702, 21320518.
+
+All of the transactions presented:
+
+⦁	Similar value pattern
+⦁	Distinct cards
+⦁	Devices with fraud history
+
+Only two merchants were envolved:
+
+⦁	The first (merchant_id 17275) also appeard in fraudulent transactions of another user( ex: transaction_id 21320511, 21321623 and 21322181), with the same pattern of distinct cards and similar values.
+
+⦁	The second Merchant only had relation with the user_id 11750, what means a possible convenience or use of fraudulent structure.
+
+3.	Device behavior patterns:
+
+⦁	device_id 563499
+
+ 	- Three fraudulent transactions approved with the same patterns already cited.
+ 	- The merchant_id 4705, associated, only has transactions with this user_id (91637), what means a elevated 	  risk of fraudulent transaction.
+
+⦁	device_id 101848
+
+	  - detected a atipc sequence:
+ 		-  Two recused attepnts of fraud in a row (21321316 and 21321309)
+ 		- One approved transaction with a higher value in squence.
+ 		- Another recused transaction, and then another approved transactio.
+ 		- In sequence, the device_id tried to make more 10 attempts in two days in a row, but all failed 		  (likely after the cards were blocked)
+
+⦁	This suggests a failure in the antifraude logic, which allowed approvals even after multiple denials in a short frame.
+
+
+2. In addition to the spreadsheet data, what other data would you consider to find patterns
+of possible fraudulent behavior?
+
+Answer:
+
+
+
+4. Considering your conclusions, what would you further suggest in order to prevent frauds
+and/or chargebacks?
+
+Answer:
+- Geospatial data: Analyzing the IP address and shipping addresses to see if there are inconsistencies. For example, if the IP address is from a different country than the billing or shipping address, it could be a red flag.
+
+- Device fingerprinting data: This data identifies the unique characteristics of a user's device, such as the operating system, screen resolution, and installed plugins. This can help detect if a fraudster is using an emulator or virtual machine.
+- Merchant-specific data:
+    - Merchant's fraud history: Is the merchant known for a high number of chargebacks or fraudulent transactions?
+    - Transaction patterns: Is the merchant seeing a sudden increase in transactions from new customers, or a large number of transactions with similar values?
+
+6. Create an anti-fraud solution.
+   
+- Done
+  
+8. Present your results and conclusions.
